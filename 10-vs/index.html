@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Skin - Taxidermy</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a1a; /* 博物馆昏黄 */
+    color: #d4c5b0;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color 0.8s ease, filter 0.8s ease;
+    overflow: hidden;
+}
+
+/* 悬停时切换的森林模式背景 */
+body.forest-mode {
+    background-color: #0d2b1f; /* 森林幽绿 */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    z-index: 10;
+}
+
+/* 标本本体设计 */
+.specimen {
+    width: 280px;
+    height: 280px;
+    background: linear-gradient(135deg, #4a3b32, #2b221b); /* 皮毛质感 */
+    border-radius: 40% 60% 50% 50% / 50% 50% 40% 60%;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+}
+
+/* 悬停时标本轻微放大 */
+.specimen:hover {
+    transform: scale(1.05);
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 15px 40px rgba(0,0,0,0.8);
+}
+
+/* 模拟玻璃眼珠 */
+.eye {
+    width: 20px;
+    height: 20px;
+    background: #111;
+    border-radius: 50%;
+    position: absolute;
+    top: 35%;
+    left: 55%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* 数字皮肤覆盖层（扫描网格） */
+.digital-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            rgba(0, 255, 128, 0.15) 0px,
+            rgba(0, 255, 128, 0.15) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+        linear-gradient(rgba(0, 255, 128, 0.1), rgba(0, 0, 0, 0.8));
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none; /* 让点击事件穿透到 .specimen */
+}
+
+/* 点击后激活数字皮肤 */
+body.digital-skin .digital-overlay {
+    opacity: 1;
+    animation: scan 2s linear infinite;
+}
+
+body.digital-skin .specimen {
+    animation: breathe 3s ease-in-out infinite;
+    box-shadow: inset 0 0 50px rgba(0, 255, 128, 0.2), 0 0 30px rgba(0, 255, 128, 0.3);
+}
+
+/* 扫描线动画 */
+@keyframes scan {
+    0% { background-position: 0 -100%; }
+    100% { background-position: 0 100%; }
+}
+
+/* 呼吸动画 */
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+/* 故事文本设计 */
+.story-text {
+    font-size: 1.2rem;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.6;
+    letter-spacing: 2px;
+    transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+/* 悬停时文本模糊，浮现提示词 */
+body.forest-mode .story-text {
+    filter: blur(2px);
+    opacity: 0.4;
+}
+
+body.forest-mode .story-text::after {
+    content: " (它依然记得森林...)";
+    font-size: 0.9rem;
+    color: #64ffda;
+    display: block;
+    margin-top: 10px;
+    filter: blur(0); /* 提示词保持清晰 */
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标本区域 -->
+        <div class="specimen" id="specimen">
+            <!-- 数字扫描层，初始隐藏 -->
+            <div class="digital-overlay"></div>
+            <!-- 模拟眼睛 -->
+            <div class="eye"></div>
+        </div>
+
+        <!-- 故事文本 -->
+        <p class="story-text" id="story-text">它被钉在橡木板上，玻璃眼珠凝视着远方。</p>
+    </div>
+
+    <!-- script 放在 body 底部，确保 DOM 加载完毕后再执行，避免使用 window.onload -->
+    <script src="script.js"></script>
+</body>
+</html>
